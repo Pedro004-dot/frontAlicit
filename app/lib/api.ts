@@ -1,6 +1,6 @@
 import { authUtils } from './authUtils';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://alicit-backend-production-ffcd.up.railway.app';
 
 export class ApiClient {
   private baseUrl: string;

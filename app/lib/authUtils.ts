@@ -52,7 +52,7 @@ import { LoginRequest, LoginResponse } from '../types/auth';
 export const authUtils = {
   // ✅ Método de login
   async login(credentials: LoginRequest): Promise<LoginResponse> {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://alicit-backend-production-ffcd.up.railway.app';
     
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',

@@ -36,7 +36,7 @@ export default function LoginForm() {
 
     try {
       console.log('Iniciando login...');
-      console.log('URL sendo usada:', process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002');
+      console.log('URL sendo usada:', process.env.NEXT_PUBLIC_API_URL || 'https://alicit-backend-production-ffcd.up.railway.app');
       console.log('Dados sendo enviados:', { email, senha });
       
       const response = await authUtils.login({ email, senha });

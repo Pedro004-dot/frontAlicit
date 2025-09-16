@@ -61,7 +61,7 @@ class AnaliseService {
 
   async downloadDocumento(documentoId: string): Promise<void> {
     try {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://alicit-backend-production-ffcd.up.railway.app';
       
       // Verificar se estamos no cliente antes de acessar localStorage
       if (typeof window === 'undefined') {
