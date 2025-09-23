@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Sidebar from './Sidebar';
+import NotificationCenter from '../global/NotificationCenter';
+import AnaliseTracker from '../global/AnaliseTracker';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -48,6 +50,12 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
           {children}
         </main>
       </div>
+
+      {/* Notification Center */}
+      <NotificationCenter />
+
+      {/* Analyse Tracker */}
+      <AnaliseTracker />
     </div>
   );
 }

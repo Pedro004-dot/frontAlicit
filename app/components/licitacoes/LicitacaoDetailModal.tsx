@@ -313,22 +313,22 @@ export default function LicitacaoDetailModal({
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="text-lg font-semibold text-[#333333] mb-4">Datas da Licitação</h3>
                     <div className="space-y-3">
-                      <div className="flex justify-between">
+                      {/* <div className="flex justify-between">
                         <span className="font-medium text-gray-600">Data de Inclusão:</span>
                         <span className="text-[#333333]">{formatDateTime(licitacao.dataInclusao)}</span>
-                      </div>
+                      </div> */}
                       <div className="flex justify-between">
                         <span className="font-medium text-gray-600">Data de Publicação PNCP:</span>
                         <span className="text-[#333333]">{formatDateTime(licitacao.dataPublicacaoPncp)}</span>
                       </div>
-                      <div className="flex justify-between">
+                      {/* <div className="flex justify-between">
                         <span className="font-medium text-gray-600">Última Atualização:</span>
                         <span className="text-[#333333]">{formatDateTime(licitacao.dataAtualizacao)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium text-gray-600">Atualização Global:</span>
                         <span className="text-[#333333]">{formatDateTime(licitacao.dataAtualizacaoGlobal)}</span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
 

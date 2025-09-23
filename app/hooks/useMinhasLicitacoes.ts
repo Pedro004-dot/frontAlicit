@@ -52,14 +52,17 @@ export function useMinhasLicitacoes(empresaCnpj: string) {
 
   const contarPorStatus = () => {
     const contadores: Record<StatusLicitacao | 'todas', number> = {
-      todas: licitacoes.length,
+      
       nao_definido: 0,
+      nao_analisado: 0,
       em_analise: 0,
+      analisado: 0,
       proposta: 0,
       enviada: 0,
       vencida: 0,
       recusada: 0,
-      perdida: 0
+      perdida: 0,
+      todas: licitacoes.length,
     };
 
     licitacoes.forEach(licitacao => {

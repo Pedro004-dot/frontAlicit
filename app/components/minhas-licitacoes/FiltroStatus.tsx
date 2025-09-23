@@ -1,5 +1,5 @@
 import { StatusLicitacao } from '../../types/licitacao';
-import { minhasLicitacoesService } from '../../lib/minhasLicitacoesService';
+import { FILTRO_STATUS_OPTIONS, STATUS_CONFIG } from '../../config/statusConfig';
 
 interface FiltroStatusProps {
   statusAtivo: StatusLicitacao | 'todas';
@@ -12,20 +12,10 @@ export default function FiltroStatus({
   onStatusChange, 
   contadores 
 }: FiltroStatusProps) {
-  const opcoesFiltro: { value: StatusLicitacao | 'todas'; label: string }[] = [
-    { value: 'todas', label: 'Todas' },
-    { value: 'nao_definido', label: 'Não Definido' },
-    { value: 'em_analise', label: 'Em Análise' },
-    { value: 'proposta', label: 'Proposta' },
-    { value: 'enviada', label: 'Enviada' },
-    { value: 'vencida', label: 'Vencida' },
-    { value: 'recusada', label: 'Recusada' },
-    { value: 'perdida', label: 'Perdida' }
-  ];
 
   return (
     <div className="flex flex-wrap gap-2 mb-6">
-      {opcoesFiltro.map((opcao) => {
+      {FILTRO_STATUS_OPTIONS.map((opcao) => {
         const isAtivo = statusAtivo === opcao.value;
         const contador = contadores[opcao.value] || 0;
         
@@ -35,17 +25,8 @@ export default function FiltroStatus({
           if (opcao.value === 'todas') {
             bgClass = 'bg-blue-500 text-white';
           } else {
-            // Usar cores específicas para cada status quando ativo
-            const statusColors = {
-              nao_definido: 'bg-yellow-500 text-white',
-              em_analise: 'bg-blue-500 text-white',
-              proposta: 'bg-green-500 text-white',
-              enviada: 'bg-purple-500 text-white',
-              vencida: 'bg-gray-500 text-white',
-              recusada: 'bg-red-500 text-white',
-              perdida: 'bg-orange-500 text-white'
-            };
-            bgClass = statusColors[opcao.value as StatusLicitacao] || 'bg-gray-500 text-white';
+            const config = STATUS_CONFIG[opcao.value as StatusLicitacao];
+            bgClass = `${config.color.replace('text-', 'bg-').replace('-600', '-500')} text-white`;
           }
         }
 

@@ -27,6 +27,25 @@ class AnaliseService {
     }
   }
 
+  async buscarAnaliseDetalhada(empresaCnpj: string, numeroControlePNCP: string) {
+    try {
+      const cnpjEncoded = encodeURIComponent(empresaCnpj);
+      const numeroEncoded = encodeURIComponent(numeroControlePNCP);
+      
+      const response = await api.get(`/edital/analise-detalhada/${cnpjEncoded}/${numeroEncoded}`) as { success: boolean; data: any };
+      
+      if (response.success && response.data) {
+        return response.data;
+      } else {
+        console.warn('Resposta da API não contém dados válidos:', response);
+        return null;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar análise detalhada:', error);
+      return null;
+    }
+  }
+
   async buscarDocumentosLicitacao(numeroControlePNCP: string): Promise<DocumentoPreview[]> {
     try {
       const numeroEncoded = encodeURIComponent(numeroControlePNCP);

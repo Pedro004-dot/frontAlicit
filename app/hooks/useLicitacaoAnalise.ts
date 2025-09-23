@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { DocumentoPreview, RelatorioTecnico, StatusLicitacao } from '../types/licitacao';
+import { AnaliseDetalhada } from '../types/analise';
 import { analiseService } from '../lib/analiseService';
 import { minhasLicitacoesService } from '../lib/minhasLicitacoesService';
 
 export function useLicitacaoAnalise(numeroControlePNCP: string, empresaCnpj: string) {
   const [relatorio, setRelatorio] = useState<RelatorioTecnico | null>(null);
+  const [analiseDetalhada, setAnaliseDetalhada] = useState<AnaliseDetalhada | null>(null);
   const [documentos, setDocumentos] = useState<DocumentoPreview[]>([]);
   const [documentoAtual, setDocumentoAtual] = useState<DocumentoPreview | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -19,13 +21,15 @@ export function useLicitacaoAnalise(numeroControlePNCP: string, empresaCnpj: str
       setLoading(true);
       setError(null);
 
-      const [relatorioData, documentosData] = await Promise.all([
+      const [relatorioData, documentosData, analiseDetalhadaData] = await Promise.all([
         analiseService.buscarRelatorioTecnico(empresaCnpj, numeroControlePNCP),
-        analiseService.buscarDocumentosLicitacao(numeroControlePNCP)
+        analiseService.buscarDocumentosLicitacao(numeroControlePNCP),
+        analiseService.buscarAnaliseDetalhada(empresaCnpj, numeroControlePNCP)
       ]);
 
       setRelatorio(relatorioData);
       setDocumentos(documentosData);
+      setAnaliseDetalhada(analiseDetalhadaData);
       
       if (documentosData.length > 0) {
         setDocumentoAtual(documentosData[0]);
@@ -119,6 +123,7 @@ export function useLicitacaoAnalise(numeroControlePNCP: string, empresaCnpj: str
 
   return {
     relatorio,
+    analiseDetalhada,
     documentos,
     documentoAtual,
     previewUrl,

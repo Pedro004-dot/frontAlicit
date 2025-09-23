@@ -63,7 +63,14 @@ export class ApiClient {
       
       const error = await response.json().catch(() => ({ error: 'Erro na requisição' }));
       console.log('Error response:', error);
-      throw new Error(error.error || 'Erro na requisição');
+      
+      
+      const customError = new Error(error.error || 'Erro na requisição');
+      (customError as any).response = {
+        status: response.status,
+        data: error
+      };
+      throw customError;
     }
 
     const result = await response.json();
@@ -104,7 +111,14 @@ export class ApiClient {
       
       const error = await response.json().catch(() => ({ error: 'Erro na requisição' }));
       console.log('Error response:', error);
-      throw new Error(error.error || 'Erro na requisição');
+      
+      // ✅ NOVO: Criar erro que preserva a resposta completa
+      const customError = new Error(error.error || 'Erro na requisição');
+      (customError as any).response = {
+        status: response.status,
+        data: error
+      };
+      throw customError;
     }
 
     const result = await response.json();

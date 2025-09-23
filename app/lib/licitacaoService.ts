@@ -26,12 +26,22 @@ export const licitacaoService = {
       // Mapear dados da estrutura do banco para formato do frontend
       return response.data.map((item: any) => {
         const licitacao = item.licitacoes;
+        
+        // 🐛 DEBUG: Log temporário para verificar dados
+        console.log('🔍 DEBUG - Dados da licitação do backend:', {
+          numero_controle_pncp: licitacao.numero_controle_pncp,
+          ano_compra: licitacao.ano_compra,
+          data_inclusao: licitacao.data_inclusao,
+          data_publicacao_pncp: licitacao.data_publicacao_pncp,
+          data_atualizacao: licitacao.data_atualizacao,
+          data_atualizacao_global: licitacao.data_atualizacao_global
+        });
         return {
           numeroControlePNCP: licitacao.numero_controle_pncp,
           objetoCompra: licitacao.objeto_compra,
           modalidadeNome: licitacao.modalidade_nome,
           valorTotalEstimado: licitacao.valor_total_estimado,
-          dataAberturaPropostas: licitacao.data_abertura_proposta,
+          dataAberturaProposta: licitacao.data_abertura_proposta,
           dataEncerramentoProposta: licitacao.data_encerramento_proposta,
           ufSigla: licitacao.uf_sigla,
           municipioNome: licitacao.municipio_nome,
@@ -47,7 +57,33 @@ export const licitacaoService = {
           // Campos extras
           processo: licitacao.processo,
           informacaoComplementar: licitacao.informacao_complementar,
-          linkSistemaOrigem: licitacao.link_sistema_origem
+          linkSistemaOrigem: licitacao.link_sistema_origem,
+          // ✅ NOVOS CAMPOS ADICIONADOS
+          anoCompra: licitacao.ano_compra,
+          sequencialCompra: licitacao.sequencial_compra,
+          numeroCompra: licitacao.numero_compra,
+          dataAtualizacaoGlobal: licitacao.data_atualizacao_global,
+          dataInclusao: licitacao.data_inclusao,
+          dataPublicacaoPncp: licitacao.data_publicacao_pncp,
+          dataAtualizacao: licitacao.data_atualizacao,
+          modalidadeId: licitacao.modalidade_id,
+          modoDisputaId: licitacao.modo_disputa_id,
+          modoDisputaNome: licitacao.modo_disputa_nome,
+          tipoInstrumentoConvocatorioCodigo: licitacao.tipo_instrumento_convocatorio_codigo,
+          tipoInstrumentoConvocatorioNome: licitacao.tipo_instrumento_convocatorio_nome,
+          srp: licitacao.srp,
+          ufNome: licitacao.uf_nome,
+          codigoIbge: licitacao.codigo_ibge,
+          codigoUnidade: licitacao.codigo_unidade,
+          nomeUnidade: licitacao.nome_unidade,
+          valorTotalHomologado: licitacao.valor_total_homologado,
+          situacaoCompraId: licitacao.situacao_compra_id,
+          unidadeSubRogada: licitacao.unidade_sub_rogada,
+          orgaoSubRogado: licitacao.orgao_sub_rogado,
+          fontesOrcamentarias: licitacao.fontes_orcamentarias,
+          usuarioNome: licitacao.usuario_nome,
+          linkProcessoEletronico: licitacao.link_processo_eletronico,
+          justificativaPresencial: licitacao.justificativa_presencial
         };
       });
     }
@@ -85,7 +121,7 @@ export const licitacaoService = {
     return apiClient.post('/licitacoes/empresa', {
       numeroControlePNCP,
       cnpjEmpresa: empresaCnpj,
-      status: 'em_analise'
+      status: 'nao_analisado'
     });
   }
 };

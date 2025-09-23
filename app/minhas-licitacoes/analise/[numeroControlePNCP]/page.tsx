@@ -8,8 +8,11 @@ import ResumoTecnico from './components/ResumoTecnico';
 import DocumentPreview from './components/DocumentPreview';
 import AcoesAprovacao from './components/AcoesAprovacao';
 import StatusIndicador from '../../../components/analise/StatusIndicador';
+import AgenteCard from '../../../components/analise/AgenteCard';
+import DadosConcretos from '../../../components/analise/DadosConcretos';
 import { useLicitacaoAnalise } from '../../../hooks/useLicitacaoAnalise';
 import { authUtils } from '../../../lib/authUtils';
+import { analiseService } from '../../../lib/analiseService';
 
 export default function AnaliseePage() {
   const params = useParams();
@@ -20,6 +23,7 @@ export default function AnaliseePage() {
 
   const {
     relatorio,
+    analiseDetalhada,
     documentos,
     documentoAtual,
     previewUrl,
@@ -37,11 +41,33 @@ export default function AnaliseePage() {
     if (userData?.empresaId) {
       setEmpresaCnpj(userData.empresaId);
     }
-
-    
-
-    
   }, []);
+
+  // Verificar se análise está finalizada
+  useEffect(() => {
+    if (!empresaCnpj) return;
+    
+    verificarStatusAnalise();
+  }, [empresaCnpj]);
+
+  const verificarStatusAnalise = async () => {
+    try {
+      const relatorioExiste = await analiseService.buscarRelatorioTecnico(empresaCnpj, numeroControlePNCP);
+      
+      if (!relatorioExiste) {
+        // Análise não finalizada - redirecionar para minhas licitações
+        router.push('/minhas-licitacoes');
+        return;
+      }
+      
+      // Análise finalizada - carregar dados normalmente
+      // O hook useLicitacaoAnalise já fará isso automaticamente
+      
+    } catch (error) {
+      console.error('Erro ao verificar status da análise:', error);
+      router.push('/minhas-licitacoes');
+    }
+  };
 
   const handleAprovar = async () => {
     try {
@@ -119,17 +145,39 @@ export default function AnaliseePage() {
             </p>
           </div>
 
-          {/* Status da Análise */}
-          {/* <StatusIndicador 
-            numeroControlePNCP={numeroControlePNCP}
-            className="mb-6"
-          /> */}
+          {/* Dados Concretos da Licitação */}
+          {analiseDetalhada?.dadosConcretos && (
+            <div className="mb-8">
+              <DadosConcretos dados={analiseDetalhada.dadosConcretos} />
+            </div>
+          )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <ResumoTecnico 
-              relatorio={relatorio} 
-              numeroControlePNCP={numeroControlePNCP}
-            />
+          {/* Análises dos Agentes */}
+          {analiseDetalhada?.agentes && (
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Análises dos Agentes Especializados</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <AgenteCard
+                  agente={analiseDetalhada.agentes.estrategico}
+                  tipo="estrategico"
+                  cor="border-blue-500"
+                />
+                <AgenteCard
+                  agente={analiseDetalhada.agentes.operacional}
+                  tipo="operacional"
+              
+                  cor="border-green-500"
+                />
+                <AgenteCard
+                  agente={analiseDetalhada.agentes.juridico}
+                  tipo="juridico"
+                  cor="border-purple-500"
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-8 mb-8">
             <DocumentPreview
               documentos={documentos}
               documentoAtual={documentoAtual}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Licitacao } from '../../types/licitacao';
 import Button from '../ui/Button';
 
@@ -10,7 +10,6 @@ interface AprovacaoModalProps {
   onClose: () => void;
   onAnalisarAgora: (numeroControlePNCP: string) => void;
   onContinuarAprovando: () => void;
-  isProcessando?: boolean;
 }
 
 export default function AprovacaoModal({ 
@@ -18,10 +17,16 @@ export default function AprovacaoModal({
   isOpen, 
   onClose, 
   onAnalisarAgora, 
-  onContinuarAprovando,
-  isProcessando = false
+  onContinuarAprovando
 }: AprovacaoModalProps) {
   const [acao, setAcao] = useState<'analisar' | 'continuar' | null>(null);
+
+  // Reset do estado quando o modal é fechado
+  useEffect(() => {
+    if (!isOpen) {
+      setAcao(null);
+    }
+  }, [isOpen]);
 
   if (!licitacao) return null;
 
@@ -58,21 +63,13 @@ export default function AprovacaoModal({
           <div className="p-6">
             {/* Header */}
             <div className="text-center mb-6">
-              <div className="text-4xl mb-2">✅</div>
               <h2 className="text-2xl font-bold text-[#333333] mb-2">
-                Licitação Aprovada!
+                Licitação Salva!
               </h2>
-              <p className="text-gray-600">
-                A licitação foi salva e está sendo processada para análise.
-              </p>
             </div>
 
             {/* Resumo da Licitação */}
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold text-[#333333] mb-2 line-clamp-2">
-                {licitacao.objetoCompra}
-              </h3>
-              
               <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
                 <div>
                   <span className="font-medium">Modalidade:</span><br />
@@ -91,20 +88,6 @@ export default function AprovacaoModal({
               </div>
             </div>
 
-            {/* Status de Processamento */}
-            {isProcessando && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                <div className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                  <span className="text-blue-800 font-medium">
-                    Análise IA em andamento...
-                  </span>
-                </div>
-                <p className="text-blue-600 text-sm mt-1">
-                  O sistema está processando os documentos e gerando o relatório técnico.
-                </p>
-              </div>
-            )}
 
             {/* Ações */}
             <div className="space-y-4">
@@ -119,9 +102,9 @@ export default function AprovacaoModal({
                     Redirecionando...
                   </>
                 ) : (
-                  <>
-                    🔍 Analisar Licitação Agora
-                  </>
+                  <div >
+                    Minhas licitações
+                  </div>
                 )}
               </Button>
 
@@ -136,21 +119,21 @@ export default function AprovacaoModal({
                     Fechando...
                   </>
                 ) : (
-                  <>
-                    📋 Continuar Aprovando Licitações
-                  </>
+                  <div className="text-[#333333]">
+                     Continuar salvando Licitações
+                  </div>
                 )}
               </Button>
             </div>
+            <div>
+              <p className="text-sm text-gray-500">
 
-            {/* Informação adicional */}
-            <div className="mt-6 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-              <p className="text-sm text-orange-800">
-                💡 <strong>Dica:</strong> Você pode continuar aprovando outras licitações enquanto 
-                esta é processada em segundo plano. O relatório ficará pronto em alguns minutos.
+                A licitação foi salva em "Minhas Licitações". 
+                A licitação só sera analisada quando voce aprovar na pagina minhas licitações.
               </p>
             </div>
           </div>
+        
         </div>
       </div>
     </div>

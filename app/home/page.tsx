@@ -75,14 +75,7 @@ export default function HomePage() {
               icon="check"
               color="orange"
             />
-            <StatCard 
-              title="Análise"
-              value={getStatCardValue(dashboardData?.analise, loading)}
-              trend={dashboardData?.total ? `${Math.round((dashboardData.analise / dashboardData.total) * 100)}%` : '0%'}
-              trendText="Em análise"
-              icon="check"
-              color="orange"
-            />
+        
             <StatCard 
               title="Propostas"
               value={getStatCardValue(dashboardData?.enviada, loading)}

@@ -13,7 +13,6 @@ import ToggleRecomendacoesBusca from '../components/licitacoes/ToggleRecomendaco
 import { Licitacao, SearchLicitacaoRequest } from '../types/licitacao';
 import { licitacaoService } from '../lib/licitacaoService';
 import { authUtils } from '../lib/authUtils';
-import { useAnaliseQueue } from '../hooks/useAnaliseQueue';
 
 export default function LicitacoesPage() {
   const router = useRouter();
@@ -35,7 +34,6 @@ export default function LicitacoesPage() {
     fonte: ''
   });
 
-  const { iniciarAnalise, loading: loadingAnalise } = useAnaliseQueue();
 
   const handleSearch = async (query: string) => {
     setLoadingBusca(true);
@@ -118,9 +116,6 @@ export default function LicitacoesPage() {
       }
 
       await licitacaoService.approveLicitacao(numeroControlePNCP, empresaCnpj);
-
-      // Iniciar análise na fila
-      await iniciarAnalise(numeroControlePNCP, empresaCnpj);
 
       // Mostrar modal de aprovação
       setLicitacaoAprovada(licitacao);
@@ -326,7 +321,7 @@ export default function LicitacoesPage() {
               }}
               onApprove={handleApproveLicitacao}
               onReject={handleRejectLicitacao}
-              showActions={tipoVisualizacao === 'recomendacoes'}
+              showActions={true}
             />
           );
         })()}
@@ -338,7 +333,6 @@ export default function LicitacoesPage() {
           onClose={() => setAprovacaoModalOpen(false)}
           onAnalisarAgora={handleAnalisarAgora}
           onContinuarAprovando={handleContinuarAprovando}
-          isProcessando={loadingAnalise}
         />
       </div>
       </AuthLayout>

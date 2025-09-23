@@ -123,7 +123,7 @@ export interface MatchingRequest {
 }
 
 // Tipos para Minhas Licitações
-export type StatusLicitacao = 'nao_definido' | 'em_analise' | 'proposta' | 'enviada' | 'vencida' | 'recusada' | 'perdida';
+export type StatusLicitacao = 'nao_definido' | 'nao_analisado' | 'em_analise' | 'analisado' | 'proposta' | 'enviada' | 'vencida' | 'recusada' | 'perdida';
 
 export interface LicitacaoEmpresa {
   id: number;
