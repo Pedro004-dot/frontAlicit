@@ -1,11 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Configuração básica para Vercel
-  // Se você estiver usando imagens, pode precisar configurar:
-  // images: {
-  //   unoptimized: true
-  // }
+  // Configuração para Vercel
+  trailingSlash: false,
+  // Garantir que as rotas funcionem corretamente
+  async redirects() {
+    return [];
+  },
+  async rewrites() {
+    return [];
+  }
 };
 
 export default nextConfig;
