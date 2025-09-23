@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Configuração para Vercel
-  output: 'standalone',
+  // Configuração básica para Vercel
   // Se você estiver usando imagens, pode precisar configurar:
   // images: {
   //   unoptimized: true
