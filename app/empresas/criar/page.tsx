@@ -6,6 +6,7 @@ import Button from '../../components/ui/Button';
 import ProtectedRoute from '@/app/components/auth/ProtectedRoute';
 import AuthLayout from '@/app/components/layout/AuthLayout';
 import { CreateEmpresaInput, empresaService } from '@/app/lib/empresaService';
+import TagInput from '@/app/components/ui/TagInput';
 
 interface DadosBasicos {
   nome: string;
@@ -536,23 +537,16 @@ export default function CriarEmpresa() {
                   </div>
                   
                   <div className="bg-gray-50 p-6 rounded-lg space-y-6">
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">
-                        Palavras-chave *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ex: construção, tecnologia, consultorias"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5000] focus:border-[#FF5000] transition-all duration-200"
-                        value={formData.dadosBusca.palavrasChave}
-                        onChange={(e) => setFormData(prev => ({
-                          ...prev,
-                          dadosBusca: { ...prev.dadosBusca, palavrasChave: e.target.value }
-                        }))}
-                      />
-                      <p className="text-sm text-gray-600 mt-2">Separe as palavras-chave por vírgula</p>
-                    </div>
+                    <TagInput
+                      label="Palavras-chave"
+                      required
+                      placeholder="Ex: construção, tecnologia, consultorias"
+                      value={formData.dadosBusca.palavrasChave}
+                      onChange={(value) => setFormData(prev => ({
+                        ...prev,
+                        dadosBusca: { ...prev.dadosBusca, palavrasChave: value }
+                      }))}
+                    />
 
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2">
@@ -571,22 +565,16 @@ export default function CriarEmpresa() {
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">
-                        Produto/Serviço Principal *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ex: Desenvolvimento de software, Construção civil"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5000] focus:border-[#FF5000] transition-all duration-200"
-                        value={formData.dadosBusca.produtoServico}
-                        onChange={(e) => setFormData(prev => ({
-                          ...prev,
-                          dadosBusca: { ...prev.dadosBusca, produtoServico: e.target.value }
-                        }))}
-                      />
-                    </div>
+                    <TagInput
+                      label="Produto/Serviço Principal"
+                      required
+                      placeholder="Ex: Desenvolvimento de software, Construção civil"
+                      value={formData.dadosBusca.produtoServico}
+                      onChange={(value) => setFormData(prev => ({
+                        ...prev,
+                        dadosBusca: { ...prev.dadosBusca, produtoServico: value }
+                      }))}
+                    />
                   </div>
                 </section>
 

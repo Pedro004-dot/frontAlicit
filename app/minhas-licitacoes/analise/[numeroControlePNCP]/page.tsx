@@ -10,9 +10,13 @@ import AcoesAprovacao from './components/AcoesAprovacao';
 import StatusIndicador from '../../../components/analise/StatusIndicador';
 import AgenteCard from '../../../components/analise/AgenteCard';
 import DadosConcretos from '../../../components/analise/DadosConcretos';
+import ResumoExecutivo from '../../../components/analise/ResumoExecutivo';
+import ItensLicitacao from '../../../components/analise/ItensLicitacao';
+import InformacoesGerais from '../../../components/analise/InformacoesGerais';
 import { useLicitacaoAnalise } from '../../../hooks/useLicitacaoAnalise';
 import { authUtils } from '../../../lib/authUtils';
 import { analiseService } from '../../../lib/analiseService';
+import { licitacaoService } from '../../../lib/licitacaoService';
 
 export default function AnaliseePage() {
   const params = useParams();
@@ -20,6 +24,8 @@ export default function AnaliseePage() {
   // Decodificar o número de controle da URL
   const numeroControlePNCP = decodeURIComponent(params.numeroControlePNCP as string);
   const [empresaCnpj, setEmpresaCnpj] = useState('');
+  const [licitacaoCompleta, setLicitacaoCompleta] = useState<any>(null);
+  const [loadingLicitacao, setLoadingLicitacao] = useState(true);
 
   const {
     relatorio,
@@ -42,6 +48,25 @@ export default function AnaliseePage() {
       setEmpresaCnpj(userData.empresaId);
     }
   }, []);
+
+  // Carregar dados completos da licitação
+  useEffect(() => {
+    const carregarLicitacaoCompleta = async () => {
+      try {
+        setLoadingLicitacao(true);
+        const dados = await licitacaoService.getUniqueLicitacao(numeroControlePNCP);
+        setLicitacaoCompleta(dados);
+      } catch (error) {
+        console.error('Erro ao carregar licitação completa:', error);
+      } finally {
+        setLoadingLicitacao(false);
+      }
+    };
+
+    if (numeroControlePNCP) {
+      carregarLicitacaoCompleta();
+    }
+  }, [numeroControlePNCP]);
 
   // Verificar se análise está finalizada
   useEffect(() => {
@@ -87,13 +112,14 @@ export default function AnaliseePage() {
     }
   };
 
-  if (loading) {
+  if (loading || loadingLicitacao) {
     return (
       <ProtectedRoute>
         <AuthLayout>
           <div className="p-8">
             <div className="flex items-center justify-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF7000]"></div>
+              <p className="ml-4 text-gray-600">Carregando dados da licitação...</p>
             </div>
           </div>
         </AuthLayout>
@@ -145,11 +171,18 @@ export default function AnaliseePage() {
             </p>
           </div>
 
-          {/* Dados Concretos da Licitação */}
-          {analiseDetalhada?.dadosConcretos && (
-            <div className="mb-8">
-              <DadosConcretos dados={analiseDetalhada.dadosConcretos} />
-            </div>
+  
+          {/* Informações Gerais da Licitação */}
+          {licitacaoCompleta && (
+            <InformacoesGerais licitacao={licitacaoCompleta} />
+          )}
+
+          {/* Itens da Licitação */}
+          {licitacaoCompleta?.licitacao_itens && (
+            <ItensLicitacao 
+              itens={licitacaoCompleta.licitacao_itens}
+              valorTotalLicitacao={licitacaoCompleta.valor_total_estimado}
+            />
           )}
 
           {/* Análises dos Agentes */}

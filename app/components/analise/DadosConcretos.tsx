@@ -1,12 +1,14 @@
 'use client';
 
 import { DadosConcretos as DadosConcretosType } from '../../types/analise';
+import { licitacaoService } from '../../lib/licitacaoService';
 
 interface DadosConcretosProps {
   dados: DadosConcretosType;
+  numeroControlePNCP:string;
 }
 
-export default function DadosConcretos({ dados }: DadosConcretosProps) {
+export default function DadosConcretos({ dados, numeroControlePNCP }: DadosConcretosProps) {
   const formatarValor = (valor?: string) => {
     if (!valor) return 'Não informado';
     return valor.includes('R$') ? valor : `R$ ${valor}`;
@@ -20,6 +22,8 @@ export default function DadosConcretos({ dados }: DadosConcretosProps) {
     { label: 'Prazo de Execução', valor: dados.prazoExecucao || 'Não informado', icone: '⏰' },
     { label: 'Local de Entrega', valor: dados.localEntrega || 'Não informado', icone: '📍' }
   ];
+  const licitacao = licitacaoService.getUniqueLicitacao(numeroControlePNCP);
+  console.log(licitacao);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">

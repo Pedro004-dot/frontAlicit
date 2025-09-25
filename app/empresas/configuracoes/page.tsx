@@ -10,6 +10,7 @@ import { empresaService } from '@/app/lib/empresaService';
 import { documentoService, Documento as DocumentoAPI } from '@/app/lib/documentoService';
 import Modal from '@/app/components/ui/Modal';
 import { useModal } from '@/app/hooks/useModal';
+import TagInput from '@/app/components/ui/TagInput';
 
 interface EmpresaData {
   cnpj: string;
@@ -107,42 +108,50 @@ export default function ConfiguracoesEmpresa() {
         
         // ✅ Buscar dados completos por CNPJ
         const data = await empresaService.getEmpresaCompletaByCnpj(empresaCNPJ);
-        console.log('📋 Dados da empresa carregados:', data);
         
         // ✅ Mapear dados da API para o formulário (considerando snake_case do banco)
+        const dataWithSnakeCase = data as any; // Type assertion para acessar campos snake_case
+        
         setEmpresaData({
           cnpj: data.cnpj || '',
           nome: data.nome || '',
-          razaoSocial: data.razaoSocial || '',
+          razaoSocial: dataWithSnakeCase.razao_social || data.razaoSocial || '',
           endereco: data.endereco || '',
           email: data.email || '',  
           telefone: data.telefone || '',
-          cep: data.cep || '',
-          cidade: data.cidade || '',
-          cidadeRadar: data.cidadeRadar || '',
-          raioDistancia: data.raioDistancia || 0,
+          cep: data.cep || dataWithSnakeCase.CEP || '',
+          cidade: data.cidade || dataWithSnakeCase.cidades || '',
+          cidadeRadar: dataWithSnakeCase.cidade_radar || data.cidadeRadar || '',
+          raioDistancia: dataWithSnakeCase.raio_distancia || data.raioDistancia || 0,
           agencia: data.agencia || '',
           numeroConta: data.numeroConta || '',
-          nomeTitular:  data.nomeTitular || '',
-          palavrasChave: data.palavrasChave || '',
+          nomeTitular: data.nomeTitular || '',
+          palavrasChave: dataWithSnakeCase.palavras_chave || data.palavrasChave || '',
           descricao: data.descricao || '',
-          produtoServico: data.produtoServico || '',
+          produtoServico: dataWithSnakeCase.produto_servico || data.produtoServico || '',
           dadosBancarios: data.dadosBancarios || {
             agencia: '',
             numeroConta: '',
             nomeTitular: ''
           },
-          documentos: data.documentos || [],
-          produtos: data.produtos || [],
-          servicos: data.servicos || [],
+          documentos: dataWithSnakeCase.empresa_documentos || data.documentos || [],
+          produtos: dataWithSnakeCase.empresa_produtos ? dataWithSnakeCase.empresa_produtos.map((p: any) => p.produto) : (data.produtos || []),
+          servicos: dataWithSnakeCase.empresa_servicos ? dataWithSnakeCase.empresa_servicos.map((s: any) => s.servico) : (data.servicos || []),
           porte: data.porte || '',
-          responsavelLegal: data.responsavelLegal || ''
+          responsavelLegal: dataWithSnakeCase.responsavel_legal || data.responsavelLegal || ''
         });
 
-        // ✅ Buscar empresa ID para carregar documentos
+        // ✅ Definir empresa ID para operações futuras
         if (data.id) {
           setEmpresaId(data.id);
-          await carregarDocumentosExistentes(data.id);
+          // Documentos já carregados na resposta principal via empresa_documentos
+          const docsExistentes = dataWithSnakeCase.empresa_documentos || [];
+          setDocumentosExistentes(docsExistentes.map((doc: any) => ({
+            id: doc.id,
+            nome_documento: doc.nome_documento,
+            data_vencimento: doc.data_vencimento,
+            status_documento: doc.status_documento || 'ativo'
+          })));
         }
 
       } catch (error) {
@@ -228,13 +237,9 @@ export default function ConfiguracoesEmpresa() {
   const handleSave = async () => {
     setLoading(true);
     try {
-      console.log('💾 Salvando dados da empresa:', empresaData);
-      console.log('📄 Documentos:', documentos);
-      
       // ✅ Fazer upload dos novos documentos PRIMEIRO
       for (const doc of documentos) {
-        if (doc.arquivo && doc.nomeDocumento && doc.dataExpiracao) {
-          console.log('📁 Fazendo upload do documento:', doc.nomeDocumento);
+        if (doc.arquivo && doc.nomeDocumento) {
           await uploadDocumento(doc);
         }
       }
@@ -242,7 +247,7 @@ export default function ConfiguracoesEmpresa() {
       // ✅ Limpar documentos locais após upload
       setDocumentos([]);
       
-      // ✅ Preparar dados para envio (apenas campos da tabela empresas)
+      // ✅ Preparar dados para envio (formato snake_case para o backend)
       const dadosParaSalvar = {
         nome: empresaData.nome,
         razao_social: empresaData.razaoSocial,
@@ -689,20 +694,13 @@ export default function ConfiguracoesEmpresa() {
                     </div>
                     
                     <div className="bg-gray-50 p-6 rounded-lg space-y-6">
-                      <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">
-                          Palavras-chave *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ex: construção, tecnologia, consultorias"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5000] focus:border-[#FF5000] transition-all duration-200"
-                                                      value={empresaData?.palavrasChave || ''}
-                            onChange={(e) => setEmpresaData(prev => ({ ...prev, palavrasChave: e.target.value }))}
-                        />
-                        <p className="text-sm text-gray-600 mt-2">Separe as palavras-chave por vírgula</p>
-                      </div>
+                      <TagInput
+                        label="Palavras-chave"
+                        required
+                        placeholder="Ex: construção, tecnologia, consultorias"
+                        value={empresaData?.palavrasChave || ''}
+                        onChange={(value) => setEmpresaData(prev => ({ ...prev, palavrasChave: value }))}
+                      />
 
                       <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">
@@ -718,19 +716,13 @@ export default function ConfiguracoesEmpresa() {
                         />
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">
-                          Produto/Serviço Principal *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ex: Desenvolvimento de software, Construção civil"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5000] focus:border-[#FF5000] transition-all duration-200"
-                                                      value={empresaData?.produtoServico || ''}
-                            onChange={(e) => setEmpresaData(prev => ({ ...prev, produtoServico: e.target.value }))}
-                        />
-                      </div>
+                      <TagInput
+                        label="Produto/Serviço Principal"
+                        required
+                        placeholder="Ex: Desenvolvimento de software, Construção civil"
+                        value={empresaData?.produtoServico || ''}
+                        onChange={(value) => setEmpresaData(prev => ({ ...prev, produtoServico: value }))}
+                      />
                     </div>
                   </section>
 

@@ -7,6 +7,7 @@ export interface DadosConcretos {
   prazoExecucao?: string;
   localEntrega?: string;
   cronograma?: string;
+  numeroControlePNCP:string;
 }
 
 export interface AnaliseAgente {
@@ -26,6 +27,7 @@ export interface AnalisesAgentes {
 export interface AnaliseDetalhada {
   scoreGeral: number;
   decisaoFinal: string;
+  numeroControlePNCP:string;
   nivelRisco: string;
   dadosConcretos: DadosConcretos;
   agentes: AnalisesAgentes;

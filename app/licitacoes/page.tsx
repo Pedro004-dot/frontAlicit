@@ -26,12 +26,12 @@ export default function LicitacoesPage() {
   const [aprovacaoModalOpen, setAprovacaoModalOpen] = useState(false);
   const [licitacaoAprovada, setLicitacaoAprovada] = useState<Licitacao | null>(null);
   const [currentFilters, setCurrentFilters] = useState<FilterOptions>({
-    tipoLicitacao: '',
     valorMinimo: '',
     valorMaximo: '',
-    dataInicio: '',
-    dataFim: '',
-    fonte: ''
+    valorMinimoUnitario: '',
+    valorMaximoUnitario: '',
+    cidade_radar: '',
+    raioDistancia: ''
   });
 
 
@@ -51,12 +51,12 @@ export default function LicitacoesPage() {
       const searchParams: SearchLicitacaoRequest & { cnpj: string } = {
         cnpj: cnpj,
         palavraChave: query,
-        ...(currentFilters.tipoLicitacao && { tipoLicitacao: currentFilters.tipoLicitacao }),
         ...(currentFilters.valorMinimo && { valorMinimo: Number(currentFilters.valorMinimo) }),
         ...(currentFilters.valorMaximo && { valorMaximo: Number(currentFilters.valorMaximo) }),
-        ...(currentFilters.dataInicio && { dataInicio: currentFilters.dataInicio }),
-        ...(currentFilters.dataFim && { dataFim: currentFilters.dataFim }),
-        ...(currentFilters.fonte && { fonte: currentFilters.fonte })
+        ...(currentFilters.valorMinimoUnitario && { valorMinimoUnitario: Number(currentFilters.valorMinimoUnitario) }),
+        ...(currentFilters.valorMaximoUnitario && { valorMaximoUnitario: Number(currentFilters.valorMaximoUnitario) }),
+        ...(currentFilters.cidade_radar && { cidade_radar: currentFilters.cidade_radar }),
+        ...(currentFilters.raioDistancia && { raioDistancia: Number(currentFilters.raioDistancia) })
       };
       
       console.log('Parâmetros de busca manual:', searchParams);

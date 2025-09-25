@@ -17,20 +17,12 @@ export const documentoService = {
     },
 
     async uploadDocumento(empresaId: string, nomeDocumento: string, dataExpiracao: string, arquivo: File): Promise<Documento> {
-        console.log('🚀 [FRONTEND] Iniciando upload de documento...');
-        console.log('🚀 [FRONTEND] EmpresaId:', empresaId);
-        console.log('🚀 [FRONTEND] Nome:', nomeDocumento);
-        console.log('🚀 [FRONTEND] Data:', dataExpiracao);
-        console.log('🚀 [FRONTEND] Arquivo:', { name: arquivo.name, size: arquivo.size, type: arquivo.type });
-
         const formData = new FormData();
         formData.append('nomeDocumento', nomeDocumento);
         formData.append('dataExpiracao', dataExpiracao);
         formData.append('arquivo', arquivo);
 
-        console.log('🌐 [FRONTEND] Fazendo requisição para:', `/empresa/${empresaId}/documentos`);
         const response = await apiClient.postFormData<Documento>(`/empresa/${empresaId}/documentos`, formData);
-        console.log('✅ [FRONTEND] Upload concluído:', response);
         return response;
     },
 

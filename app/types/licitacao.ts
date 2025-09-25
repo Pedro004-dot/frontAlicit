@@ -100,12 +100,12 @@ export interface MatchResult {
 
 export interface SearchLicitacaoRequest {
   palavraChave: string;
-  tipoLicitacao?: string;
-  dataInicio?: string;
-  dataFim?: string;
   valorMinimo?: number;
   valorMaximo?: number;
-  fonte?: string;
+  valorMinimoUnitario?: number;
+  valorMaximoUnitario?: number;
+  cidade_radar?: string;
+  raioDistancia?: number;
 }
 
 export interface MatchingRequest {

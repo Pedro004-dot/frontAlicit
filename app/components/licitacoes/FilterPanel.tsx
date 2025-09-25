@@ -4,12 +4,12 @@ import { useState } from 'react';
 import Button from '../ui/Button';
 
 export interface FilterOptions {
-  tipoLicitacao: string;
   valorMinimo: string;
   valorMaximo: string;
-  dataInicio: string;
-  dataFim: string;
-  fonte: string;
+  valorMinimoUnitario: string;
+  valorMaximoUnitario: string;
+  cidade_radar: string;
+  raioDistancia: string;
 }
 
 interface FilterPanelProps {
@@ -20,12 +20,12 @@ interface FilterPanelProps {
 export default function FilterPanel({ onApplyFilters, loading = false }: FilterPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({
-    tipoLicitacao: '',
     valorMinimo: '',
     valorMaximo: '',
-    dataInicio: '',
-    dataFim: '',
-    fonte: ''
+    valorMinimoUnitario: '',
+    valorMaximoUnitario: '',
+    cidade_radar: '',
+    raioDistancia: ''
   });
 
   const handleFilterChange = (key: keyof FilterOptions, value: string) => {
@@ -39,12 +39,12 @@ export default function FilterPanel({ onApplyFilters, loading = false }: FilterP
 
   const handleClearFilters = () => {
     const emptyFilters: FilterOptions = {
-      tipoLicitacao: '',
       valorMinimo: '',
       valorMaximo: '',
-      dataInicio: '',
-      dataFim: '',
-      fonte: ''
+      valorMinimoUnitario: '',
+      valorMaximoUnitario: '',
+      cidade_radar: '',
+      raioDistancia: ''
     };
     setFilters(emptyFilters);
     onApplyFilters(emptyFilters);
@@ -76,97 +76,114 @@ export default function FilterPanel({ onApplyFilters, loading = false }: FilterP
       {/* Filter Panel */}
       {isOpen && (
         <div className="mt-4 p-6 bg-white rounded-lg border shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Tipo de Licitação */}
-            <div>
-              <label className="block text-sm font-medium text-[#333333] mb-2">
-                Tipo de Licitação
-              </label>
-              <select
-                value={filters.tipoLicitacao}
-                onChange={(e) => handleFilterChange('tipoLicitacao', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
-              >
-                <option value="">Todos os tipos</option>
-                <option value="pregao">Pregão</option>
-                <option value="concorrencia">Concorrência</option>
-                <option value="tomada_preco">Tomada de Preço</option>
-                <option value="convite">Convite</option>
-              </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Seção Valor Total */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-[#333333] border-b pb-1">Valor Total da Licitação</h3>
+              
+              {/* Valor Mínimo */}
+              <div>
+                <label className="block text-sm font-medium text-[#333333] mb-2">
+                  Valor Mínimo (R$)
+                </label>
+                <input
+                  type="number"
+                  value={filters.valorMinimo}
+                  onChange={(e) => handleFilterChange('valorMinimo', e.target.value)}
+                  placeholder="Ex: 10.000"
+                  min="0"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
+                />
+              </div>
+
+              {/* Valor Máximo */}
+              <div>
+                <label className="block text-sm font-medium text-[#333333] mb-2">
+                  Valor Máximo (R$)
+                </label>
+                <input
+                  type="number"
+                  value={filters.valorMaximo}
+                  onChange={(e) => handleFilterChange('valorMaximo', e.target.value)}
+                  placeholder="Ex: 1.000.000"
+                  min="0"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
+                />
+              </div>
             </div>
 
-            {/* Valor Mínimo */}
-            <div>
-              <label className="block text-sm font-medium text-[#333333] mb-2">
-                Valor Mínimo (R$)
-              </label>
-              <input
-                type="number"
-                value={filters.valorMinimo}
-                onChange={(e) => handleFilterChange('valorMinimo', e.target.value)}
-                placeholder="Ex: 10000"
-                min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
-              />
+            {/* Seção Valor Unitário */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-[#333333] border-b pb-1">Valor Unitário dos Itens</h3>
+              
+              {/* Valor Mínimo Unitário */}
+              <div>
+                <label className="block text-sm font-medium text-[#333333] mb-2">
+                  Valor Mínimo (R$)
+                </label>
+                <input
+                  type="number"
+                  value={filters.valorMinimoUnitario}
+                  onChange={(e) => handleFilterChange('valorMinimoUnitario', e.target.value)}
+                  placeholder="Ex: 100"
+                  min="0"
+                  step="0.01"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
+                />
+              </div>
+
+              {/* Valor Máximo Unitário */}
+              <div>
+                <label className="block text-sm font-medium text-[#333333] mb-2">
+                  Valor Máximo (R$)
+                </label>
+                <input
+                  type="number"
+                  value={filters.valorMaximoUnitario}
+                  onChange={(e) => handleFilterChange('valorMaximoUnitario', e.target.value)}
+                  placeholder="Ex: 5.000"
+                  min="0"
+                  step="0.01"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
+                />
+              </div>
             </div>
 
-            {/* Valor Máximo */}
-            <div>
-              <label className="block text-sm font-medium text-[#333333] mb-2">
-                Valor Máximo (R$)
-              </label>
-              <input
-                type="number"
-                value={filters.valorMaximo}
-                onChange={(e) => handleFilterChange('valorMaximo', e.target.value)}
-                placeholder="Ex: 1000000"
-                min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
-              />
-            </div>
+            {/* Seção Localização */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-[#333333] border-b pb-1">Filtros Geográficos</h3>
+              
+              {/* Cidade Radar */}
+              <div>
+                <label className="block text-sm font-medium text-[#333333] mb-2">
+                  Cidade de Referência
+                </label>
+                <input
+                  type="text"
+                  value={filters.cidade_radar}
+                  onChange={(e) => handleFilterChange('cidade_radar', e.target.value)}
+                  placeholder="Ex: São Paulo"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
+                />
+              </div>
 
-            {/* Fonte */}
-            <div>
-              <label className="block text-sm font-medium text-[#333333] mb-2">
-                Fonte
-              </label>
-              <select
-                value={filters.fonte}
-                onChange={(e) => handleFilterChange('fonte', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
-              >
-                <option value="">Todas as fontes</option>
-                <option value="pncp">PNCP</option>
-                <option value="compras_net">Compras.net</option>
-              </select>
-            </div>
-
-            {/* Data Início */}
-            <div>
-              <label className="block text-sm font-medium text-[#333333] mb-2">
-                Data Início
-              </label>
-              <input
-                type="date"
-                value={filters.dataInicio}
-                onChange={(e) => handleFilterChange('dataInicio', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
-              />
-            </div>
-
-            {/* Data Fim */}
-            <div>
-              <label className="block text-sm font-medium text-[#333333] mb-2">
-                Data Fim
-              </label>
-              <input
-                type="date"
-                value={filters.dataFim}
-                onChange={(e) => handleFilterChange('dataFim', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
-              />
+              {/* Raio Distância */}
+              <div>
+                <label className="block text-sm font-medium text-[#333333] mb-2">
+                  Raio de Distância (km)
+                </label>
+                <input
+                  type="number"
+                  value={filters.raioDistancia}
+                  onChange={(e) => handleFilterChange('raioDistancia', e.target.value)}
+                  placeholder="Ex: 50"
+                  min="1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5000] focus:border-transparent"
+                />
+              </div>
             </div>
           </div>
+          <span className="text-sm text-gray-500">* Coloque o nome da cidade corretamente para que o filtro funcione corretamente</span>
 
           {/* Action Buttons */}
           <div className="flex justify-end space-x-3 mt-6">

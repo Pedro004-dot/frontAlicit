@@ -9,10 +9,10 @@ export const licitacaoService = {
       palavraChave: params.palavraChave,
       valorMinimo: params.valorMinimo,
       valorMaximo: params.valorMaximo,
-      tipoLicitacao: params.tipoLicitacao,
-      dataInicio: params.dataInicio,
-      dataFim: params.dataFim,
-      fonte: params.fonte
+      valorMinimoUnitario: params.valorMinimoUnitario,
+      valorMaximoUnitario: params.valorMaximoUnitario,
+      cidade_radar: params.cidade_radar,
+      raioDistancia: params.raioDistancia
     };
     return apiClient.post<Licitacao[]>('/licitacoes/find', findRequest);
   },
@@ -91,6 +91,10 @@ export const licitacaoService = {
     return [];
   },
 
+  async getUniqueLicitacao(numeroControlePNCP: string): Promise<Licitacao> {
+    return apiClient.get<Licitacao>(`/licitacoes/getUniqueLicitacao?numero=${numeroControlePNCP}`);
+  },
+
   async findLicitacao(numeroControlePNCP: string): Promise<Licitacao> {
     return apiClient.post<Licitacao>('/licitacoes/find', { numeroControlePNCP });
   },
@@ -124,4 +128,5 @@ export const licitacaoService = {
       status: 'nao_analisado'
     });
   }
+
 };
