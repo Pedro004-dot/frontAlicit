@@ -27,15 +27,6 @@ export const licitacaoService = {
       return response.data.map((item: any) => {
         const licitacao = item.licitacoes;
         
-        // 🐛 DEBUG: Log temporário para verificar dados
-        console.log('🔍 DEBUG - Dados da licitação do backend:', {
-          numero_controle_pncp: licitacao.numero_controle_pncp,
-          ano_compra: licitacao.ano_compra,
-          data_inclusao: licitacao.data_inclusao,
-          data_publicacao_pncp: licitacao.data_publicacao_pncp,
-          data_atualizacao: licitacao.data_atualizacao,
-          data_atualizacao_global: licitacao.data_atualizacao_global
-        });
         return {
           numeroControlePNCP: licitacao.numero_controle_pncp,
           objetoCompra: licitacao.objeto_compra,

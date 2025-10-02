@@ -284,9 +284,9 @@ export default function LicitacoesPage() {
                 <div className="text-sm text-gray-600 mb-2">
                   {licitacoesBuscaManual.length} resultado{licitacoesBuscaManual.length !== 1 ? 's' : ''} encontrado{licitacoesBuscaManual.length !== 1 ? 's' : ''}
                 </div>
-                {licitacoesBuscaManual.map((licitacao) => (
+                {licitacoesBuscaManual.map((licitacao, index) => (
                   <LicitacaoCard
-                    key={licitacao.numeroControlePNCP}
+                    key={licitacao.numeroControlePNCP || `licitacao-${index}`}
                     licitacao={licitacao}
                     onClick={() => handleCardClick(licitacao)}
                   />
