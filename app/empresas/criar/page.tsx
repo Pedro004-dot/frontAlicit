@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Button from '../../components/ui/Button';
 import ProtectedRoute from '@/app/components/auth/ProtectedRoute';
 import AuthLayout from '@/app/components/layout/AuthLayout';
-import { CreateEmpresaInput, empresaService } from '@/app/lib/empresaService';
+import { CreateEmpresaInput, empresaService, ProdutoServico } from '@/app/lib/empresaService';
 import TagInput from '@/app/components/ui/TagInput';
 
 interface DadosBasicos {
@@ -16,9 +16,10 @@ interface DadosBasicos {
   email: string;
   telefone: string;
   cep: string;
-  cidade: string; // ✅ Adicionar campo cidade
+  cidade: string;
   cidadeRadar: string;
   raioDistancia: number;
+  descricao: string;
 }
 
 interface Documento {
@@ -33,17 +34,12 @@ interface DadosBancarios {
   nomeTitular: string;
 }
 
-interface DadosBusca {
-  palavrasChave: string;
-  descricao: string;
-  produtoServico: string;
-}
 
 interface FormData {
   dadosBasicos: DadosBasicos;
   documentos: Documento[];
   dadosBancarios: DadosBancarios;
-  dadosBusca: DadosBusca;
+  produtosServicos: ProdutoServico[];
 }
 
 export default function CriarEmpresa() {
@@ -61,7 +57,8 @@ export default function CriarEmpresa() {
       cep: '',
       cidade: '',
       cidadeRadar: '',
-      raioDistancia: 0
+      raioDistancia: 0,
+      descricao: ''
     },
     documentos: [],
     dadosBancarios: {
@@ -69,11 +66,7 @@ export default function CriarEmpresa() {
       numeroConta: '',
       nomeTitular: ''
     },
-    dadosBusca: {
-      palavrasChave: '',
-      descricao: '',
-      produtoServico: ''
-    }
+    produtosServicos: []
   });
 
   const adicionarDocumento = () => {
@@ -104,6 +97,35 @@ export default function CriarEmpresa() {
     }));
   };
 
+  const adicionarProdutoServico = () => {
+    const novo: ProdutoServico = {
+      nome: '',
+      descricao: '',
+      valor: undefined,
+      tipo: 'produto'
+    };
+    setFormData(prev => ({
+      ...prev,
+      produtosServicos: [...prev.produtosServicos, novo]
+    }));
+  };
+
+  const removerProdutoServico = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      produtosServicos: prev.produtosServicos.filter((_, i) => i !== index)
+    }));
+  };
+
+  const atualizarProdutoServico = (index: number, campo: keyof ProdutoServico, valor: any) => {
+    setFormData(prev => ({
+      ...prev,
+      produtosServicos: prev.produtosServicos.map((item, i) => 
+        i === index ? { ...item, [campo]: valor } : item
+      )
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -128,14 +150,13 @@ export default function CriarEmpresa() {
           numeroConta: formData.dadosBancarios.numeroConta,
           nomeTitular: formData.dadosBancarios.nomeTitular
         },
-        palavrasChave: formData.dadosBusca.palavrasChave,
-        descricao: formData.dadosBusca.descricao,
-        produtoServico: formData.dadosBusca.produtoServico,
+        descricao: formData.dadosBasicos.descricao,
         documentos: formData.documentos.filter(doc => doc.arquivo).map(doc => ({
           nomeDocumento: doc.nomeDocumento,
           dataExpiracao: doc.dataExpiracao,
           arquivo: doc.arquivo!
         })), // ✅ Filtrar e mapear documentos com arquivo
+        produtosServicos: formData.produtosServicos,
         produtos: [],
         servicos: [],
         porte: []
@@ -373,6 +394,23 @@ export default function CriarEmpresa() {
                         }))}
                       />
                     </div>
+
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">
+                        Descrição da Empresa *
+                      </label>
+                      <textarea
+                        required
+                        rows={4}
+                        placeholder="Descreva os principais serviços e atividades da empresa"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5000] focus:border-[#FF5000] transition-all duration-200"
+                        value={formData.dadosBasicos.descricao}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          dadosBasicos: { ...prev.dadosBasicos, descricao: e.target.value }
+                        }))}
+                      />
+                    </div>
                   </div>
                 </section>
 
@@ -527,56 +565,121 @@ export default function CriarEmpresa() {
                   </div>
                 </section>
 
-                {/* Seção 4: Dados de Busca */}
+                {/* Seção 4: Produtos e Serviços */}
                 <section>
-                  <div className="flex items-center mb-6">
-                    <div className="flex items-center justify-center w-10 h-10 bg-[#FF5000] text-white rounded-full mr-4">
-                      <span className="text-lg font-bold">4</span>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center">
+                      <div className="flex items-center justify-center w-10 h-10 bg-[#FF5000] text-white rounded-full mr-4">
+                        <span className="text-lg font-bold">4</span>
+                      </div>
+                      <h2 className="text-2xl font-bold text-[#333333]">Produtos e Serviços</h2>
                     </div>
-                    <h2 className="text-2xl font-bold text-[#333333]">Dados de Busca</h2>
+                    <Button
+                      type="button"
+                      onClick={adicionarProdutoServico}
+                      className="px-4 py-2"
+                    >
+                      + Adicionar Produto/Serviço
+                    </Button>
                   </div>
-                  
-                  <div className="bg-gray-50 p-6 rounded-lg space-y-6">
-                    <TagInput
-                      label="Palavras-chave"
-                      required
-                      placeholder="Ex: construção, tecnologia, consultorias"
-                      value={formData.dadosBusca.palavrasChave}
-                      onChange={(value) => setFormData(prev => ({
-                        ...prev,
-                        dadosBusca: { ...prev.dadosBusca, palavrasChave: value }
-                      }))}
-                    />
 
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">
-                        Descrição da Empresa *
-                      </label>
-                      <textarea
-                        required
-                        rows={4}
-                        placeholder="Descreva os principais serviços e atividades da empresa"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5000] focus:border-[#FF5000] transition-all duration-200"
-                        value={formData.dadosBusca.descricao}
-                        onChange={(e) => setFormData(prev => ({
-                          ...prev,
-                          dadosBusca: { ...prev.dadosBusca, descricao: e.target.value }
-                        }))}
-                      />
-                    </div>
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    {formData.produtosServicos.length === 0 ? (
+                      <div className="text-center py-12 text-gray-500">
+                        <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                        <p>Nenhum produto ou serviço adicionado ainda</p>
+                        <p className="text-sm">Clique em "Adicionar Produto/Serviço" para começar</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
 
-                    <TagInput
-                      label="Produto/Serviço Principal"
-                      required
-                      placeholder="Ex: Desenvolvimento de software, Construção civil"
-                      value={formData.dadosBusca.produtoServico}
-                      onChange={(value) => setFormData(prev => ({
-                        ...prev,
-                        dadosBusca: { ...prev.dadosBusca, produtoServico: value }
-                      }))}
-                    />
+                        {/* Formulários de Edição */}
+                        <div className="space-y-4">
+                          {formData.produtosServicos.map((item, index) => (
+                            <div key={index} className="bg-white p-6 rounded-lg border">
+                              <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-bold text-[#333333]">{item.nome}</h3>
+                                <button
+                                  type="button"
+                                  onClick={() => removerProdutoServico(index)}
+                                  className="text-red-500 hover:text-red-700 transition-colors"
+                                >
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                </button>
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                                    Tipo *
+                                  </label>
+                                  <select
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5000] focus:border-[#FF5000] transition-all duration-200"
+                                    value={item.tipo}
+                                    onChange={(e) => atualizarProdutoServico(index, 'tipo', e.target.value as 'produto' | 'servico')}
+                                  >
+                                    <option value="produto">Produto</option>
+                                    <option value="servico">Serviço</option>
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                                    Nome *
+                                  </label>
+                                  <input
+                                    type="text"
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5000] focus:border-[#FF5000] transition-all duration-200"
+                                    value={item.nome}
+                                    onChange={(e) => atualizarProdutoServico(index, 'nome', e.target.value)}
+                                    placeholder="Nome do produto/serviço"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                                    Descrição
+                                  </label>
+                                  <textarea
+                                    rows={3}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5000] focus:border-[#FF5000] transition-all duration-200"
+                                    value={item.descricao || ''}
+                                    onChange={(e) => atualizarProdutoServico(index, 'descricao', e.target.value)}
+                                    placeholder="Descrição detalhada (opcional)"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                                    Valor (R$)
+                                  </label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5000] focus:border-[#FF5000] transition-all duration-200"
+                                    value={item.valor || ''}
+                                    onChange={(e) => atualizarProdutoServico(index, 'valor', e.target.value ? parseFloat(e.target.value) : undefined)}
+                                    placeholder="Valor unitário (opcional)"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </section>
+
 
                 {/* Botões de Ação */}
                 <div className="flex justify-between pt-6 border-t">

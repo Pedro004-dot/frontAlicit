@@ -1,5 +1,13 @@
 import { apiClient } from "./api";
 
+export interface ProdutoServico {
+    id?: string;
+    nome: string;
+    descricao?: string;
+    valor?: number;
+    tipo: 'produto' | 'servico';
+}
+
 export interface Empresa {
     id: string;
     nome: string;
@@ -22,6 +30,7 @@ export interface Empresa {
     documentos: Documento[];
     produtos: string[];
     servicos: string[];
+    produtosServicos?: ProdutoServico[];
     porte: string;
     responsavelLegal: string;
     createdAt: string;
@@ -48,17 +57,16 @@ export interface CreateEmpresaInput {
     endereco: string;
     email: string;
     telefone: string;
-    CEP: string; // ✅ Usar CEP como no backend
-    cidades?: string; // ✅ Usar cidades como no backend
+    CEP: string;
+    cidades?: string;
     cidadeRadar?: string;
     raioDistancia?: number;
-    dadosBancarios: DadosBancarios; // ✅ Obrigatório
-    palavrasChave: string;
+    dadosBancarios: DadosBancarios;
     descricao: string;
-    produtoServico: string;
     documentos?: Documento[];
     produtos?: string[];
     servicos?: string[];
+    produtosServicos?: ProdutoServico[];
     porte?: string[];
     responsavelLegal?: string;
 }
