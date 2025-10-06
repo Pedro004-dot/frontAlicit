@@ -189,20 +189,19 @@ export default function AnaliseePage() {
           {analiseDetalhada?.agentes && (
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-6">Análises dos Agentes Especializados</h2>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-6">
                 <AgenteCard
-                  agente={analiseDetalhada.agentes.estrategico}
+                  agente={analiseDetalhada.agentes.estrategico || null}
                   tipo="estrategico"
                   cor="border-blue-500"
                 />
                 <AgenteCard
-                  agente={analiseDetalhada.agentes.operacional}
+                  agente={analiseDetalhada.agentes.operacional || null}
                   tipo="operacional"
-              
                   cor="border-green-500"
                 />
                 <AgenteCard
-                  agente={analiseDetalhada.agentes.juridico}
+                  agente={analiseDetalhada.agentes.juridico || null}
                   tipo="juridico"
                   cor="border-purple-500"
                 />

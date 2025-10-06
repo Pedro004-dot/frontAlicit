@@ -40,41 +40,37 @@ export default function AcoesAprovacao({
 
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+        Decisão sobre a Licitação
+      </h3>
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-center max-w-md mx-auto">
         <Button
           onClick={handleRecusar}
           disabled={isDisabled}
-          className="w-full sm:w-auto px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full sm:w-40 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {processando ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              Processando...
+              <span className="text-sm">Processando...</span>
             </>
           ) : (
-            <>
-              RECUSAR
-            </>
+            <span>NÃO PROSSEGUIR</span>
           )}
         </Button>
-
-        <div className="hidden sm:block w-px h-12 bg-gray-200"></div>
-        <div className="sm:hidden w-full h-px bg-gray-200"></div>
 
         <Button
           onClick={handleAprovar}
           disabled={isDisabled}
-          className="w-full sm:w-auto px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full sm:w-40 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {processando ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              Processando...
+              <span className="text-sm">Processando...</span>
             </>
           ) : (
-            <>
-              APROVAR
-            </>
+            <span>PROSSEGUIR</span>
           )}
         </Button>
       </div>

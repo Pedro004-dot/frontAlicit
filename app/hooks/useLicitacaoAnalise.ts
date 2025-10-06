@@ -43,9 +43,17 @@ export function useLicitacaoAnalise(numeroControlePNCP: string, empresaCnpj: str
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar dados da análise:', error);
-      setError('Erro ao carregar dados da análise');
+      
+      // Verificar se o erro tem uma mensagem amigável para o usuário
+      if (error.userMessage) {
+        setError(error.userMessage);
+      } else if (error.message) {
+        setError(error.message);
+      } else {
+        setError('Erro ao carregar dados da análise');
+      }
     } finally {
       setLoading(false);
     }

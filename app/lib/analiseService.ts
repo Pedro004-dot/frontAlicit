@@ -40,9 +40,45 @@ class AnaliseService {
         console.warn('Resposta da API não contém dados válidos:', response);
         return null;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar análise detalhada:', error);
+      
+      // Extrair informações do erro para feedback melhor
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        throw {
+          code: errorData.code || 'UNKNOWN_ERROR',
+          message: errorData.message || 'Erro desconhecido',
+          userMessage: this.getErrorUserMessage(errorData.code, errorData.message)
+        };
+      }
+      
       return null;
+    }
+  }
+
+  private getErrorUserMessage(code: string, message: string): string {
+    switch (code) {
+      case 'ANALYSIS_NOT_FOUND':
+        return 'Análise não encontrada. A licitação pode não ter sido analisada ainda.';
+      case 'UNSUPPORTED_DOCUMENT_FORMAT':
+        return 'O documento desta licitação não está em um formato suportado (PDF, DOCX). Entre em contato com o suporte.';
+      case 'CORRUPTED_DOCUMENT':
+        return 'O documento da licitação está corrompido. Tente novamente mais tarde ou entre em contato com o suporte.';
+      case 'UNEXTRACTABLE_TEXT':
+        return 'O documento é uma imagem digitalizada sem texto extraível. Entre em contato com o suporte para análise manual.';
+      case 'DOCUMENTS_NOT_FOUND':
+        return 'Documentos da licitação não foram encontrados no PNCP.';
+      case 'DOWNLOAD_FAILED':
+        return 'Falha ao baixar documentos do PNCP. Tente novamente mais tarde.';
+      case 'LICITACAO_NOT_FOUND':
+        return 'Licitação não encontrada na base de dados.';
+      case 'ANALYSIS_IN_PROGRESS':
+        return 'Análise em andamento. Aguarde alguns minutos e tente novamente.';
+      case 'ANALYSIS_ALREADY_EXISTS':
+        return 'Esta licitação já foi analisada anteriormente.';
+      default:
+        return message || 'Erro inesperado. Tente novamente ou entre em contato com o suporte.';
     }
   }
 
