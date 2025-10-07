@@ -99,7 +99,7 @@ export default function LicitacaoDetailModal({
       await licitacaoService.atualizarStatusLicitacao({
         numeroControlePNCP: licitacao.numeroControlePNCP,
         empresaCnpj: userData.empresaId,
-        status: 'recusado'
+        status: 'recusada'
       });
 
       onReject?.(licitacao.numeroControlePNCP);

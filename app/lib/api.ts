@@ -126,12 +126,14 @@ export class ApiClient {
     return result;
   }
 
-  async get<T>(endpoint: string): Promise<T> {
+  async get<T>(endpoint: string, options?: { responseType?: 'blob' }): Promise<T> {
     console.log('Making GET request to:', `${this.baseUrl}${endpoint}`);
 
+    const headers = this.getAuthHeaders();
+    
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'GET',
-      headers: this.getAuthHeaders(),
+      headers: headers,
     });
 
     if (!response.ok) {
@@ -154,7 +156,17 @@ export class ApiClient {
       }
       
       const error = await response.json().catch(() => ({ error: 'Erro na requisição' }));
-      throw new Error(error.error || 'Erro na requisição');
+      const customError = new Error(error.error || 'Erro na requisição');
+      (customError as any).response = {
+        status: response.status,
+        data: error
+      };
+      throw customError;
+    }
+
+    // Handle blob response type
+    if (options?.responseType === 'blob') {
+      return response.blob() as Promise<T>;
     }
 
     return response.json();
