@@ -11,6 +11,7 @@ import { documentoService, Documento as DocumentoAPI } from '@/app/lib/documento
 import Modal from '@/app/components/ui/Modal';
 import { useModal } from '@/app/hooks/useModal';
 import TagInput from '@/app/components/ui/TagInput';
+import ProdutoServicoImport from '@/app/components/ui/ProdutoServicoImport';
 
 interface EmpresaData {
   cnpj: string;
@@ -742,6 +743,17 @@ export default function ConfiguracoesEmpresa() {
                     </div>
 
                     <div className="bg-gray-50 p-6 rounded-lg">
+                      {/* Componente de Importação */}
+                      <ProdutoServicoImport 
+                        cnpj={empresaData.cnpj}
+                        onSuccess={() => {
+                          // Recarregar dados da empresa após importação
+                          window.location.reload();
+                        }}
+                        onError={(error) => {
+                          showAlert('Erro', error, 'error');
+                        }}
+                      />
                       {empresaData.produtosServicos.length === 0 ? (
                         <div className="text-center py-12 text-gray-500">
                           <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

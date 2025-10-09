@@ -1,6 +1,7 @@
 import { authUtils } from './authUtils';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://alicit-backend-production-ffcd.up.railway.app';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
 
 export class ApiClient {
   private baseUrl: string;
@@ -204,42 +205,59 @@ export class ApiClient {
   }
 
   async postFormData<T>(endpoint: string, formData: FormData): Promise<T> {
-    console.log('Making FormData POST request to:', `${this.baseUrl}${endpoint}`);
+    const fullUrl = `${this.baseUrl}${endpoint}`;
     
     const headers: HeadersInit = {};
     
     const token = authUtils.getToken();
+    
     if (token && !authUtils.isTokenExpired()) {
       headers.Authorization = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'POST',
-      headers,
-      body: formData,
-    });
+    try {
+      const response = await fetch(fullUrl, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
 
-    if (!response.ok) {
-      if (response.status === 401) {
-        const error = await response.json().catch(() => ({ error: 'Erro na requisição' }));
-        
-        if (error.error === 'Token não fornecido' || error.error === 'Token inválido' || error.error === 'Sessão expirada') {
-          console.warn('Token rejeitado pelo servidor. Redirecionando para login...');
-          authUtils.clearAuth();
-          if (typeof window !== 'undefined') {
-            window.location.href = '/login';
+      if (!response.ok) {
+        let errorText;
+        try {
+          errorText = await response.text();
+        } catch (textError) {
+          errorText = 'Erro desconhecido';
+        }
+
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch (jsonError) {
+          errorData = { error: errorText };
+        }
+
+        if (response.status === 401) {
+          if (errorData.error === 'Token não fornecido' || errorData.error === 'Token inválido' || errorData.error === 'Sessão expirada') {
+            authUtils.clearAuth();
+            if (typeof window !== 'undefined') {
+              window.location.href = '/login';
+            }
+            throw new Error('Sessão expirada');
           }
-          throw new Error('Sessão expirada');
+          
+          throw new Error(errorData.error || 'Não autorizado');
         }
         
-        throw new Error(error.error || 'Não autorizado');
+        throw new Error(errorData.error || 'Erro na requisição');
       }
-      
-      const error = await response.json().catch(() => ({ error: 'Erro na requisição' }));
-      throw new Error(error.error || 'Erro na requisição');
-    }
 
-    return response.json();
+      const result = await response.json();
+      return result;
+      
+    } catch (fetchError: any) {
+      throw fetchError;
+    }
   }
 }
 

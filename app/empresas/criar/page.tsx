@@ -7,6 +7,7 @@ import ProtectedRoute from '@/app/components/auth/ProtectedRoute';
 import AuthLayout from '@/app/components/layout/AuthLayout';
 import { CreateEmpresaInput, empresaService, ProdutoServico } from '@/app/lib/empresaService';
 import TagInput from '@/app/components/ui/TagInput';
+import ProdutoServicoImport from '@/app/components/ui/ProdutoServicoImport';
 
 interface DadosBasicos {
   nome: string;
@@ -584,6 +585,18 @@ export default function CriarEmpresa() {
                   </div>
 
                   <div className="bg-gray-50 p-6 rounded-lg">
+                    {/* Componente de Importação - apenas para visualização na página de criar */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                      <div className="flex items-center justify-center text-blue-600">
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="text-sm font-medium">
+                          A importação em lote estará disponível após criar a empresa
+                        </span>
+                      </div>
+                    </div>
+
                     {formData.produtosServicos.length === 0 ? (
                       <div className="text-center py-12 text-gray-500">
                         <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
