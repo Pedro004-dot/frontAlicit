@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
+import { api } from '../lib/api';
 interface BiData {
   totalLicitacoes: number;
   valorTotalEstimado: number;
@@ -19,13 +19,9 @@ export function useBi() {
         setError(null);
 
         // Buscar dados gerais do Brasil (sem filtros) via modalidades
-        const response = await fetch('http://localhost:8080/bi/modalidades');
+        const response = await api.get<any>(`/bi/modalidades`);
         
-        if (!response.ok) {
-          throw new Error(`Erro ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
+        const data = response.data;
         
         // Usar dados do Brasil
         const brasilData = data.geral?.Brasil;
