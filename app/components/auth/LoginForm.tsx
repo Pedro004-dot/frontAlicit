@@ -81,6 +81,13 @@ export default function LoginForm() {
       console.log('Salvando token data:', tokenData);
       authUtils.setToken(tokenData);
       
+      // Auto-selecionar empresa após salvar dados
+      const autoSelectedEmpresa = authUtils.autoSelectEmpresa();
+      if (autoSelectedEmpresa) {
+        authUtils.updateSelectedEmpresa(autoSelectedEmpresa);
+        console.log('Empresa auto-selecionada:', autoSelectedEmpresa);
+      }
+      
       console.log('Token salvo, verificando localStorage...');
       console.log('authToken:', localStorage.getItem('authToken'));
       console.log('userData:', localStorage.getItem('userData'));

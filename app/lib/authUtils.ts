@@ -120,7 +120,33 @@ export const authUtils = {
         ...userData,
         empresaId: cnpj
       }));
+      // Salvar como última empresa usada
+      authUtils.setLastUsedEmpresa(cnpj);
     }
+  },
+
+  setLastUsedEmpresa: (cnpj: string): void => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('lastUsedEmpresa', cnpj);
+  },
+
+  getLastUsedEmpresa: (): string | null => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('lastUsedEmpresa');
+  },
+
+  autoSelectEmpresa: (): string | null => {
+    const userData = authUtils.getUserData();
+    if (!userData?.empresas?.length) return null;
+    
+    // 1. Tentar última empresa usada
+    const lastUsed = authUtils.getLastUsedEmpresa();
+    if (lastUsed && userData.empresas.find(e => e.cnpj === lastUsed)) {
+      return lastUsed;
+    }
+    
+    // 2. Fallback: primeira empresa
+    return userData.empresas[0].cnpj;
   },
 
   getSelectedEmpresaCnpj: (): string | null => {
