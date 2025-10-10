@@ -19,12 +19,12 @@ export function useBi() {
         setError(null);
 
         // Buscar dados gerais do Brasil (sem filtros) via modalidades
-        const response = await api.get<any>(`/bi/modalidades`);
-        
-        const data = response.data;
+        const data = await api.get<any>(`/bi/modalidades`);
+        console.log('🔍 Resposta completa da API BI:', data);
         
         // Usar dados do Brasil
-        const brasilData = data.geral?.Brasil;
+        const brasilData = data?.geral?.Brasil;
+        console.log('🔍 Brasil data:', brasilData);
         if (brasilData) {
           setBiData({
             totalLicitacoes: brasilData.total,
